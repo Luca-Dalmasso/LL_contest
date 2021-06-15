@@ -195,6 +195,21 @@ proc get_design_priority {} {
 		set attributes [get_cell_attributes $cell]
 		lappend cell_lvt_leak [lindex $attributes 4]
 		lappend cell_lvt_delay [lindex $attributes 7]
+
+
+		#find area and dyn power characteristics
+		set area [lindex $attributes 2]
+		set leakage [lindex $attributes 4]
+		set dynamic [lindex $attributes 5]
+
+		set min_a_c [get_min_area_cell $cell]
+		set min_a_attributes [get_cell_attributes $min_a_c]
+		set min_a_area [lindex $min_a_attributes 2]
+		set min_a_leakage [lindex $min_a_attributes 4]
+		set min_a_dynamic [lindex $min_a_attributes 5]
+
+		set ratio [expr [expr $area / $min_a_area + $dynamic / $min_a_dynamic] / [expr $min_a_leakage / $leakage]]
+		puts "cell: $cell ratio: $ratio"
 	}
 	for {set i 0} {$i<[llength $cells]} {incr i} {
 		set cell_priority [expr {([lindex $cell_hvt_leak $i] - [lindex $cell_lvt_leak $i])/([lindex $cell_hvt_delay $i]-[lindex $cell_lvt_delay $i])}]
@@ -205,6 +220,12 @@ proc get_design_priority {} {
 		lappend ret [lindex $item 0]
 	}
 	return $ret
+}
+
+#get the inimum area cell of the same type of the one passed as parameter
+proc get_min_area_cell {cell} {
+	#to be implemented (past lab maybe)
+	return $cell
 }
 
 #print statistics
