@@ -8,6 +8,8 @@ suppress_message PWR-246
 suppress_message PWR-602
 suppress_message PWR-601
 
+source ./explore_alternative_cells.tcl
+
 
 #procedure to swap set of cells from HVT->LVT or LVT->HVT
 #USAGE: (example1) swap "U310" LVT, (example2) swap [list "U310 U308"] HVT
@@ -29,14 +31,14 @@ proc swap {cells type} {
 				continue
 			}
 			set refName [regsub -all {_LH} $refName {_LL}]
-			size_cell $cell "$LVT$refName" 
+			size_cell $cell "$LVT$refName"
 		} else {
 			if {[regexp {_LH} $refName] } {
 				continue
 			}
 			set refName [regsub -all {_LL} $refName {_LH}]
 			size_cell $cell "$HVT$refName"
-		} 
+		}
 	}
 }
 
@@ -55,8 +57,7 @@ proc min {val1 val2} {
 	}
 	return $val2
 }
-proc get_cell_attributes {cell} {
-	set cellREF [get_cell $cell]
+proc get_cell_attributes_from_OBJ {cellREF} {
 	set attr_list [list]
 	if {$cellREF == ""} {
 		puts "$cellREF doesn't exists in the current design!"
@@ -105,6 +106,11 @@ proc get_cell_attributes {cell} {
 	return $attr_list
 }
 
+proc get_cell_attributes {cell} {
+	set cellOBJ [get_cell $cell]
+	return [get_cell_attributes_from_OBJ $cellOBJ]
+}
+
 #return a percentages of cells used in the design, like the report_threshold_voltage_group
 #RETURN [list "xx.yy%" "xx.yy%"], first real is for LVT% second for HVT%
 #INFO: report_threshold_volatge_group command (from PrimeTime) may be necessary to be run before(??)
@@ -120,7 +126,7 @@ proc get_design_percentage {} {
 		incr tot_count
 	}
 	set percentage [expr {$count_LVT*100.00/$tot_count}]
-	lappend ret $percentage 
+	lappend ret $percentage
 	lappend ret [expr {100-$percentage}]
 	return $ret
 }
@@ -133,7 +139,7 @@ proc get_all_cells {} {
 		lappend cells [get_attribute $cell full_name]
 	}
 	return $cells
-} 
+}
 
 #return mapped design's 1)leakage power, 2)dynamic power, 3)total_power, 4)area
 #RETURN: [list <leakage> <dynamic> <total> <area>]
@@ -182,6 +188,7 @@ proc get_design_priority {} {
 	set cell_lvt_delay [list]
 	set priority_list [list]
 	set cells [get_all_cells]
+
 	#map all design with HVT
 	swap $cells HVT
 	foreach cell $cells {
@@ -202,14 +209,17 @@ proc get_design_priority {} {
 		set leakage [lindex $attributes 4]
 		set dynamic [lindex $attributes 5]
 
-		set min_a_c [get_min_area_cell $cell]
-		set min_a_attributes [get_cell_attributes $min_a_c]
-		set min_a_area [lindex $min_a_attributes 2]
-		set min_a_leakage [lindex $min_a_attributes 4]
-		set min_a_dynamic [lindex $min_a_attributes 5]
+		set min_a_attributes [get_min_area_cell_attributes $cell]
+		if {[llength $min_a_attributes] > 0} {
+			puts "MIN AREA CELL ATTRIBUTES: $min_a_attributes"
 
-		set ratio [expr [expr $area / $min_a_area + $dynamic / $min_a_dynamic] / [expr $min_a_leakage / $leakage]]
-		puts "cell: $cell ratio: $ratio"
+			#set min_a_area [lindex $min_a_attributes 0]
+			#set min_a_leakage [lindex $min_a_attributes 1]
+			#set min_a_dynamic [lindex $min_a_attributes 2]
+
+			#set ratio [expr [expr $area / $min_a_area + $dynamic / $min_a_dynamic] / [expr $min_a_leakage / $leakage]]
+			#puts "cell: $cell ratio: $ratio"
+		}
 	}
 	for {set i 0} {$i<[llength $cells]} {incr i} {
 		set cell_priority [expr {([lindex $cell_hvt_leak $i] - [lindex $cell_lvt_leak $i])/([lindex $cell_hvt_delay $i]-[lindex $cell_lvt_delay $i])}]
@@ -222,10 +232,9 @@ proc get_design_priority {} {
 	return $ret
 }
 
-#get the inimum area cell of the same type of the one passed as parameter
-proc get_min_area_cell {cell} {
-	#to be implemented (past lab maybe)
-	return $cell
+#find minimum area cell of the cell same type of the one passed as parameter
+proc get_min_area_cell_attributes {cell} {
+	return [sub_min $cell]
 }
 
 #print statistics
