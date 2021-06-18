@@ -57,26 +57,27 @@ proc min {val1 val2} {
 	}
 	return $val2
 }
-proc get_cell_attributes_from_OBJ {cellREF} {
+proc get_cell_attributes {cell_name} {
+	set cellOBJ [get_cell $cell_name]
 	set attr_list [list]
-	if {$cellREF == ""} {
-		puts "$cellREF doesn't exists in the current design!"
+	if {$cellOBJ == ""} {
+		puts "$cellOBJ doesn't exists in the current design!"
 		return attr_list
 	}
 	set sizeregexp {\w*X(\d*)}
-	set out_pins [get_pins -of_object $cellREF -filter {direction==out}]
-	lappend attr_list [get_attribute $cellREF full_name]
-	lappend attr_list [get_attribute $cellREF ref_name]
-	lappend attr_list [get_attribute $cellREF area]
+	set out_pins [get_pins -of_object $cellOBJ -filter {direction==out}]
+	lappend attr_list [get_attribute $cellOBJ full_name]
+	lappend attr_list [get_attribute $cellOBJ ref_name]
+	lappend attr_list [get_attribute $cellOBJ area]
 	set ref_name [lindex $attr_list 1]
 	if {[regexp $sizeregexp $ref_name match_line size] } {
 		lappend attr_list $size
 	} else {
 		lappend attr_list " "
 	}
-	lappend attr_list [get_attribute $cellREF leakage_power]
-        lappend attr_list [get_attribute $cellREF dynamic_power]
-	lappend attr_list [get_attribute $cellREF total_power]
+	lappend attr_list [get_attribute $cellOBJ leakage_power]
+        lappend attr_list [get_attribute $cellOBJ dynamic_power]
+	lappend attr_list [get_attribute $cellOBJ total_power]
 	set max_fall_arrival 0
 	set max_rise_arrival 0
 	set max_slack 0
@@ -104,11 +105,6 @@ proc get_cell_attributes_from_OBJ {cellREF} {
 	lappend attr_list [max $max_rise_arrival $max_fall_arrival]
 	lappend attr_list $max_slack
 	return $attr_list
-}
-
-proc get_cell_attributes {cell} {
-	set cellOBJ [get_cell $cell]
-	return [get_cell_attributes_from_OBJ $cellOBJ]
 }
 
 #return a percentages of cells used in the design, like the report_threshold_voltage_group
@@ -195,31 +191,43 @@ proc get_design_priority {} {
 		set attributes [get_cell_attributes $cell]
 		lappend cell_hvt_leak [lindex $attributes 4]
 		lappend cell_hvt_delay [lindex $attributes 7]
+
+		#find area and dyn power characteristics
+		set cell_lvt_ref_name [lindex $attributes 1]
+		set cell_lvt_area [lindex $attributes 2]
+		set cell_lvt_leakage [lindex $attributes 4]
+		set cell_lvt_dynamic [lindex $attributes 5]
+
+		#puts "slack before change: [get_attribute [get_timing_paths] slack]"
+		set swap_result [swap_cell_with_min_size $cell]
+		#set swap_result 0
+		#puts "slack after change: [get_attribute [get_timing_paths] slack]"
+		if {$swap_result} {
+			#cell successfully swapped
+			set min_a_attributes [get_cell_attributes $cell]
+			set min_a_area [lindex $min_a_attributes 2]
+			set min_a_leakage [lindex $min_a_attributes 4]
+			set min_a_dynamic [lindex $min_a_attributes 5]
+			set ratio [expr [expr $cell_lvt_area / $min_a_area + $cell_lvt_dynamic / $min_a_dynamic] / [expr $min_a_leakage / $cell_lvt_leakage]]
+			puts "Ratio: $ratio"
+			#we can act on this parameter
+			if {$ratio < 10} {
+				#come back to the original size
+				swap_cells_HVT $cell $cell_lvt_ref_name
+				#puts "AAA slack after restore: [get_attribute [get_timing_paths] slack]"
+				incr area_changes_minus
+			}
+			incr area_changes
+		}
 	}
+	puts "changed [expr $area_changes - $area_changes_minus] cells with min area ones (over $area_changes)"
+
 	#map all design with LVT
 	swap $cells LVT
 	foreach cell $cells {
 		set attributes [get_cell_attributes $cell]
 		lappend cell_lvt_leak [lindex $attributes 4]
 		lappend cell_lvt_delay [lindex $attributes 7]
-
-
-		#find area and dyn power characteristics
-		set area [lindex $attributes 2]
-		set leakage [lindex $attributes 4]
-		set dynamic [lindex $attributes 5]
-
-		set min_a_attributes [get_min_area_cell_attributes $cell]
-		if {[llength $min_a_attributes] > 0} {
-			puts "MIN AREA CELL ATTRIBUTES: $min_a_attributes"
-
-			#set min_a_area [lindex $min_a_attributes 0]
-			#set min_a_leakage [lindex $min_a_attributes 1]
-			#set min_a_dynamic [lindex $min_a_attributes 2]
-
-			#set ratio [expr [expr $area / $min_a_area + $dynamic / $min_a_dynamic] / [expr $min_a_leakage / $leakage]]
-			#puts "cell: $cell ratio: $ratio"
-		}
 	}
 	for {set i 0} {$i<[llength $cells]} {incr i} {
 		set cell_priority [expr {([lindex $cell_hvt_leak $i] - [lindex $cell_lvt_leak $i])/([lindex $cell_hvt_delay $i]-[lindex $cell_lvt_delay $i])}]
@@ -230,11 +238,6 @@ proc get_design_priority {} {
 		lappend ret [lindex $item 0]
 	}
 	return $ret
-}
-
-#find minimum area cell of the cell same type of the one passed as parameter
-proc get_min_area_cell_attributes {cell} {
-	return [sub_min $cell]
 }
 
 #print statistics
@@ -253,8 +256,8 @@ proc print {} {
 proc optimize {minimum_slack} {
 	print
 	set priorities [get_design_priority]
+	puts "starting_slack: [get_slack $minimum_slack]"
 	foreach cell $priorities {
-		#try to swap
 		swap $cell HVT
 		if {[get_slack $minimum_slack]==0} {
 			#constraints not met! rollback and stop!
