@@ -17,28 +17,38 @@ proc get_mapping {cells} {
 
 #IN: cell name ex U300
 proc swap_cell_with_min_size {cell_name} {
+	set LVT "CORE65LPLVT_nom_1.20V_25C.db:CORE65LPLVT/"
+	set HVT "CORE65LPHVT_nom_1.20V_25C.db:CORE65LPHVT/"
 	set cell_obj [get_cell $cell_name]
 	set refName [sub_min $cell_obj]
 	if {$refName == ""} {
 		return 0
 	}
-	swap_cells_HVT $cell_name $refName
+	set VTH [lindex [lindex [get_mapping $cell_name] 0] 1]
+	if {$VTH == "LVT"} {
+		size_cell $cell_obj "$LVT$refName"
+	} elseif {$VTH == "HVT"} {
+		size_cell $cell_obj "$HVT$refName"
+	} else {
+		puts "VTH TYPE $VTH not recognized"
+		return 0
+	}
 	return 1
 }
 
-proc swap_cells_LVT {cell_name cell_ref} {
+proc swap_cell_back {current_cell_name new_cell_ref} {
 	set LVT "CORE65LPLVT_nom_1.20V_25C.db:CORE65LPLVT/"
-	set cell_obj [get_cell $cell_name]
-	size_cell $cell_obj "$LVT$cell_ref"
-#	puts "cell_obj: [get_attribute $cell_obj ref_name] changed with $cell_ref"
-	return 1
-}
-
-proc swap_cells_HVT {cell_name cell_ref} {
-	set LVT "CORE65LPHVT_nom_1.20V_25C.db:CORE65LPHVT/"
-	set cell_obj [get_cell $cell_name]
-	size_cell $cell_obj "$LVT$cell_ref"
-#	puts "cell_obj: [get_attribute $cell_obj ref_name] changed with $cell_ref"
+	set HVT "CORE65LPHVT_nom_1.20V_25C.db:CORE65LPHVT/"
+	set cell_obj [get_cell $current_cell_name]
+	set VTH [lindex [lindex [get_mapping $current_cell_name] 0] 1]
+	if {$VTH == "LVT"} {
+		size_cell $cell_obj "$LVT$new_cell_ref"
+	} elseif {$VTH == "HVT"} {
+		size_cell $cell_obj "$HVT$new_cell_ref"
+	} else {
+		puts "VTH TYPE $VTH not recognized"
+		return 0
+	}
 	return 1
 }
 

@@ -182,8 +182,65 @@ proc get_design_priority {} {
 	set cell_lvt_leak [list]
 	set cell_hvt_delay [list]
 	set cell_lvt_delay [list]
+	set cell_init_area [list]
+	set cell_min_area [list]
+	set cell_init_leak [list]
+	set cell_min_leak [list]
+	set cell_init_dynamic [list]
+	set cell_min_dynamic [list]
 	set priority_list [list]
 	set cells [get_all_cells]
+	set cell_original_ref_name [list]
+
+	#set area_opt 0
+	set area_opt 1
+	if {$area_opt} {
+
+	#set initial params
+	foreach cell $cells {
+		set attributes [get_cell_attributes $cell]
+		lappend cell_init_area [lindex $attributes 2]
+		lappend cell_init_leak [lindex $attributes 4]
+		lappend cell_init_dynamic [lindex $attributes 5]
+		lappend cell_original_ref_name [lindex $attributes 1]
+	}
+
+	set area_changes 0
+	#map all design with min-area cells
+	foreach cell $cells {
+		set swap_result [swap_cell_with_min_size $cell]
+		if {$swap_result} {
+			incr area_changes
+		}
+	}
+
+	foreach cell $cells {
+		set min_a_attributes [get_cell_attributes $cell]
+		lappend cell_min_area [lindex $min_a_attributes 2]
+		lappend cell_min_leak [lindex $min_a_attributes 4]
+		lappend cell_min_dynamic [lindex $min_a_attributes 5]
+	}
+
+	set area_changes_minus 0
+	#come back to normal size if it is not worth to change
+	for {set i 0} {$i<[llength $cells]} {incr i} {
+		if {[lindex $cell_min_area $i] == [lindex $cell_init_area $i]} {
+			#no swap has been performed
+			continue
+		}
+		set ratio [expr (([lindex $cell_init_area $i] / [lindex $cell_min_area $i]) + ([lindex $cell_init_dynamic $i] / [lindex $cell_min_dynamic $i])) / ([lindex $cell_min_leak $i] / [lindex $cell_init_leak $i])]
+		puts "Ratio: $ratio"
+		#we can act on this parameter
+		if {$ratio < 10} {
+			#come back to the original size
+			swap_cell_back [lindex $cells $i] [lindex $cell_original_ref_name $i]
+			incr area_changes_minus
+		}
+	}
+
+	puts "changed [expr $area_changes - $area_changes_minus] cells with min area ones (over $area_changes)"
+
+	}
 
 	#map all design with HVT
 	swap $cells HVT
@@ -191,36 +248,7 @@ proc get_design_priority {} {
 		set attributes [get_cell_attributes $cell]
 		lappend cell_hvt_leak [lindex $attributes 4]
 		lappend cell_hvt_delay [lindex $attributes 7]
-
-		#find area and dyn power characteristics
-		set cell_lvt_ref_name [lindex $attributes 1]
-		set cell_lvt_area [lindex $attributes 2]
-		set cell_lvt_leakage [lindex $attributes 4]
-		set cell_lvt_dynamic [lindex $attributes 5]
-
-		#puts "slack before change: [get_attribute [get_timing_paths] slack]"
-		set swap_result [swap_cell_with_min_size $cell]
-		#set swap_result 0
-		#puts "slack after change: [get_attribute [get_timing_paths] slack]"
-		if {$swap_result} {
-			#cell successfully swapped
-			set min_a_attributes [get_cell_attributes $cell]
-			set min_a_area [lindex $min_a_attributes 2]
-			set min_a_leakage [lindex $min_a_attributes 4]
-			set min_a_dynamic [lindex $min_a_attributes 5]
-			set ratio [expr [expr $cell_lvt_area / $min_a_area + $cell_lvt_dynamic / $min_a_dynamic] / [expr $min_a_leakage / $cell_lvt_leakage]]
-			puts "Ratio: $ratio"
-			#we can act on this parameter
-			if {$ratio < 10} {
-				#come back to the original size
-				swap_cells_HVT $cell $cell_lvt_ref_name
-				#puts "AAA slack after restore: [get_attribute [get_timing_paths] slack]"
-				incr area_changes_minus
-			}
-			incr area_changes
-		}
 	}
-	puts "changed [expr $area_changes - $area_changes_minus] cells with min area ones (over $area_changes)"
 
 	#map all design with LVT
 	swap $cells LVT
@@ -255,6 +283,9 @@ proc print {} {
 #INFO: MAIN function!
 proc optimize {minimum_slack} {
 	print
+	set start_time [clock seconds]
+	set curr_stats [get_power_stats]
+	set linit [list [lindex $curr_stats 0] [lindex $curr_stats 1] [lindex $curr_stats 3]]
 	set priorities [get_design_priority]
 	puts "starting_slack: [get_slack $minimum_slack]"
 	foreach cell $priorities {
@@ -267,5 +298,9 @@ proc optimize {minimum_slack} {
 			break
 		}
 	}
+	set end_time [clock seconds]
 	print
+	set curr_stats [get_power_stats]
+	set lfin [list [lindex $curr_stats 0] [lindex $curr_stats 1] [lindex $curr_stats 3]]
+	echo "score: [expr ((([lindex $linit 0]/[lindex $lfin 0]) + ([lindex $linit 1]/[lindex $lfin 1]) + ([lindex $linit 2]/[lindex $lfin 2])) * (1 - (($end_time - $start_time) / 900)))]"
 }

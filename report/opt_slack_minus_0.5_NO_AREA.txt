@@ -1,0 +1,18 @@
+CURRENT MAPPING
+-------------------------------------------------------------------------------------------
+Information: Running switching activity propagation with 4 threads!
+HVT%  | LVT%  |                 LEAK |              DYNAMIC |                TOTAL |  AREA |
+52.74 | 47.26 |    4.14969854361e-07 |    0.000478519981819 |     0.00047893495017 | 798.2 |
+-------------------------------------------------------------------------------------------
+Information: Running switching activity propagation with 4 threads!
+Information: Running switching activity propagation with 4 threads!
+starting_slack: 1
+NO MORE OPTIMIZATION IS POSSIBLE!
+I ARRIVED UNTIL U343
+CURRENT MAPPING
+-------------------------------------------------------------------------------------------
+Information: Running switching activity propagation with 4 threads!
+HVT%  | LVT%  |                 LEAK |              DYNAMIC |                TOTAL |  AREA |
+51.90 | 48.10 |    8.36547517125e-07 |      0.0004804009693 |    0.000481237517631 | 798.2 |
+-------------------------------------------------------------------------------------------
+score: 2.49213509494
