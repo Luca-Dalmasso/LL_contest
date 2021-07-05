@@ -165,6 +165,7 @@ proc get_power_stats {} {
 #INFO: WARNING: this function is time consuming!
 proc get_slack {slack_inferior_limit} {
 	set slack [get_attribute [get_timing_paths] slack]
+	puts "circuit slack: $slack"
 	if {$slack<$slack_inferior_limit} {
 		return 0
 	}
@@ -191,10 +192,7 @@ proc get_design_priority {} {
 	set priority_list [list]
 	set cells [get_all_cells]
 	set cell_original_ref_name [list]
-
-	#set area_opt 0
-	set area_opt 1
-	if {$area_opt} {
+	set cell_original_type [list]
 
 	#set initial params
 	foreach cell $cells {
@@ -205,15 +203,12 @@ proc get_design_priority {} {
 		lappend cell_original_ref_name [lindex $attributes 1]
 	}
 
-	set area_changes 0
 	#map all design with min-area cells
 	foreach cell $cells {
-		set swap_result [swap_cell_with_min_size $cell]
-		if {$swap_result} {
-			incr area_changes
-		}
+		lappend cell_original_type [swap_cell_with_min_size $cell]
 	}
 
+	#set min area params
 	foreach cell $cells {
 		set min_a_attributes [get_cell_attributes $cell]
 		lappend cell_min_area [lindex $min_a_attributes 2]
@@ -221,8 +216,7 @@ proc get_design_priority {} {
 		lappend cell_min_dynamic [lindex $min_a_attributes 5]
 	}
 
-	set area_changes_minus 0
-	#come back to normal size if it is not worth to change
+	set area_ratio_list [list]
 	for {set i 0} {$i<[llength $cells]} {incr i} {
 		if {[lindex $cell_min_area $i] == [lindex $cell_init_area $i]} {
 			#no swap has been performed
@@ -230,17 +224,16 @@ proc get_design_priority {} {
 		}
 		set ratio [expr (([lindex $cell_init_area $i] / [lindex $cell_min_area $i]) + ([lindex $cell_init_dynamic $i] / [lindex $cell_min_dynamic $i])) / ([lindex $cell_min_leak $i] / [lindex $cell_init_leak $i])]
 		puts "Ratio: $ratio"
-		#we can act on this parameter
-		if {$ratio < 10} {
-			#come back to the original size
-			swap_cell_back [lindex $cells $i] [lindex $cell_original_ref_name $i]
-			incr area_changes_minus
-		}
+		lappend area_ratio_list "[lindex $cells $i] [lindex $cell_original_ref_name $i] [lindex $cell_original_type $i] $ratio"
 	}
 
-	puts "changed [expr $area_changes - $area_changes_minus] cells with min area ones (over $area_changes)"
-
+	#map all design with min-area cells
+	set i 0
+	foreach cell $cells {
+		swap_cell_back_with_type $cell [lindex $cell_original_ref_name $i] [lindex $cell_original_type $i]
+		incr i
 	}
+
 
 	#map all design with HVT
 	swap $cells HVT
@@ -261,11 +254,15 @@ proc get_design_priority {} {
 		set cell_priority [expr {([lindex $cell_hvt_leak $i] - [lindex $cell_lvt_leak $i])/([lindex $cell_hvt_delay $i]-[lindex $cell_lvt_delay $i])}]
 		lappend priority_list "[lindex $cells $i] $cell_priority"
 	}
-	set ret [list]
-	foreach item [lsort -index 1 -decreasing -real $priority_list] {
-		lappend ret [lindex $item 0]
+	set ret_1 [list]
+	foreach item [lsort -index 3 -decreasing -real $area_ratio_list] {
+		lappend ret_1 [list [lindex $item 0] [lindex $item 1] [lindex $item 2]]
 	}
-	return $ret
+	set ret_2 [list]
+	foreach item [lsort -index 1 -decreasing -real $priority_list] {
+		lappend ret_2 [lindex $item 0]
+	}
+	return [list $ret_1 $ret_2]
 }
 
 #print statistics
@@ -287,8 +284,29 @@ proc optimize {minimum_slack} {
 	set curr_stats [get_power_stats]
 	set linit [list [lindex $curr_stats 0] [lindex $curr_stats 1] [lindex $curr_stats 3]]
 	set priorities [get_design_priority]
-	puts "starting_slack: [get_slack $minimum_slack]"
-	foreach cell $priorities {
+	set priorities_area [lindex $priorities 0]
+	set priorities_vth [lindex $priorities 1]
+
+	set area_changes 0
+	foreach row $priorities_area {
+		set cell [lindex $row 0]
+		set original_ref_name [lindex $row 1]
+		set original_type [lindex $row 2]
+		swap_cell_with_min_size $cell
+		incr area_changes
+		if {[get_slack $minimum_slack]==0} {
+			#constraints not met! rollback and stop!
+			puts "NO MORE OPTIMIZATION IS POSSIBLE!"
+			puts "I ARRIVED UNTIL $cell"
+			#come back to the original size
+			puts "cell to change: $cell, with $original_ref_name"
+			swap_cell_back_with_type $cell $original_ref_name $original_type
+			set area_changes [expr $area_changes - 1]
+			break
+		}
+	}
+	puts "changed $area_changes cells"
+	foreach cell $priorities_vth {
 		swap $cell HVT
 		if {[get_slack $minimum_slack]==0} {
 			#constraints not met! rollback and stop!
@@ -298,6 +316,8 @@ proc optimize {minimum_slack} {
 			break
 		}
 	}
+	puts "final slack: "
+	get_slack $minimum_slack
 	set end_time [clock seconds]
 	print
 	set curr_stats [get_power_stats]

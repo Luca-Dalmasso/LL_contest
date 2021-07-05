@@ -33,20 +33,19 @@ proc swap_cell_with_min_size {cell_name} {
 		puts "VTH TYPE $VTH not recognized"
 		return 0
 	}
-	return 1
+	return $VTH
 }
 
-proc swap_cell_back {current_cell_name new_cell_ref} {
+proc swap_cell_back_with_type {current_cell_name new_cell_ref new_cell_type} {
 	set LVT "CORE65LPLVT_nom_1.20V_25C.db:CORE65LPLVT/"
 	set HVT "CORE65LPHVT_nom_1.20V_25C.db:CORE65LPHVT/"
 	set cell_obj [get_cell $current_cell_name]
-	set VTH [lindex [lindex [get_mapping $current_cell_name] 0] 1]
-	if {$VTH == "LVT"} {
+	if {$new_cell_type == "LVT"} {
 		size_cell $cell_obj "$LVT$new_cell_ref"
-	} elseif {$VTH == "HVT"} {
+	} elseif {$new_cell_type == "HVT"} {
 		size_cell $cell_obj "$HVT$new_cell_ref"
 	} else {
-		puts "VTH TYPE $VTH not recognized"
+		puts "VTH TYPE $new_cell_type not recognized"
 		return 0
 	}
 	return 1
