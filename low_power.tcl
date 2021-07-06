@@ -293,7 +293,10 @@ proc get_design_priority {} {
 		}
 		set ratio [expr (([lindex $cell_init_area $i] / [lindex $cell_min_area $i]) + ([lindex $cell_init_dynamic $i] / [lindex $cell_min_dynamic $i])) / ([lindex $cell_min_leak $i] / [lindex $cell_init_leak $i])]
 		puts "Ratio: $ratio"
-		lappend area_ratio_list "[lindex $cells $i] $ratio"
+		if {$ratio > 1} {
+			#it is worth to change
+			lappend area_ratio_list "[lindex $cells $i] $ratio"
+		}
 	}
 
 	#map all design with min-area cells
@@ -358,7 +361,7 @@ proc optimize {minimum_slack} {
 	set priorities_area [lindex $priorities 0]
 	set priorities_vth [lindex $priorities 1]
 
-	if {0} {
+	if {1} {
 	set area_changes 0
 	foreach cell $priorities_area {
 		set original_ref_name [lindex [get_cell_attributes $cell] 1]
