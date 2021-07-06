@@ -8,9 +8,6 @@ suppress_message PWR-246
 suppress_message PWR-602
 suppress_message PWR-601
 
-source ./explore_alternative_cells.tcl
-
-
 #procedure to swap set of cells from HVT->LVT or LVT->HVT
 #USAGE: (example1) swap "U310" LVT, (example2) swap [list "U310 U308"] HVT
 #RETURN: 0->error, 1->all good
@@ -172,6 +169,78 @@ proc get_slack {slack_inferior_limit} {
 	return 1
 }
 
+#IN: list of cells
+#OUT: list of {mapped cell name (ref_name), Threashold voltage group}
+proc get_mapping {cells} {
+	set cell_GTh [list]
+	foreach item $cells {
+		set cell [get_cell $item]
+		set name [get_attribute $cell ref_name]
+		set group [get_attribute [get_lib_cell -of_object $cell] threshold_voltage_group]
+		lappend cell_GTh "$name $group"
+	}
+	return $cell_GTh
+}
+
+#IN: cell name ex U300
+#OUT: cell_type (HVT,LVT)
+proc swap_cell_with_min_size {cell_name} {
+	set LVT "CORE65LPLVT_nom_1.20V_25C.db:CORE65LPLVT/"
+	set HVT "CORE65LPHVT_nom_1.20V_25C.db:CORE65LPHVT/"
+	set cell_obj [get_cell $cell_name]
+	set refName [sub_min $cell_obj]
+	if {$refName == ""} {
+		return 0
+	}
+	set VTH [lindex [lindex [get_mapping $cell_name] 0] 1]
+	if {$VTH == "LVT"} {
+		size_cell $cell_obj "$LVT$refName"
+	} elseif {$VTH == "HVT"} {
+		size_cell $cell_obj "$HVT$refName"
+	} else {
+		puts "VTH TYPE $VTH not recognized"
+		return 0
+	}
+	return $VTH
+}
+
+#IN: cell_name ex U300, cell_ref_name and cell_type (HVT,LVT)
+proc swap_cell_back_with_type {current_cell_name new_cell_ref new_cell_type} {
+	set LVT "CORE65LPLVT_nom_1.20V_25C.db:CORE65LPLVT/"
+	set HVT "CORE65LPHVT_nom_1.20V_25C.db:CORE65LPHVT/"
+	set cell_obj [get_cell $current_cell_name]
+	if {$new_cell_type == "LVT"} {
+		size_cell $cell_obj "$LVT$new_cell_ref"
+	} elseif {$new_cell_type == "HVT"} {
+		size_cell $cell_obj "$HVT$new_cell_ref"
+	} else {
+		puts "VTH TYPE $new_cell_type not recognized"
+		return 0
+	}
+	return 1
+}
+
+#return minimum area substitute for IN cell
+proc sub_min {cell_obj} {
+	set min_size 10000000000000
+	set cell_min_ref_name ""
+	set bname_list [get_alternative_lib_cells -current_library -base_name $cell_obj]
+	if {[llength $bname_list] > 0} {
+		foreach bname $bname_list {
+			set match_flag [regexp {X(\d+)} $bname match_line size]
+			if {$match_flag == 1} {
+				if {$min_size == 0} {
+					set min_size $size
+				} elseif {$size < $min_size}  {
+					set min_size $size
+					set cell_min_ref_name $bname
+				}
+			}
+		}
+	}
+	return $cell_min_ref_name
+}
+
 #return priority list of cells to change from LVT->HVT in order to optimize the leakage power 
 #	without violating slack constraints
 #RETURN: cells full_names sorted by priority
@@ -224,7 +293,7 @@ proc get_design_priority {} {
 		}
 		set ratio [expr (([lindex $cell_init_area $i] / [lindex $cell_min_area $i]) + ([lindex $cell_init_dynamic $i] / [lindex $cell_min_dynamic $i])) / ([lindex $cell_min_leak $i] / [lindex $cell_init_leak $i])]
 		puts "Ratio: $ratio"
-		lappend area_ratio_list "[lindex $cells $i] [lindex $cell_original_ref_name $i] [lindex $cell_original_type $i] $ratio"
+		lappend area_ratio_list "[lindex $cells $i] $ratio"
 	}
 
 	#map all design with min-area cells
@@ -254,10 +323,12 @@ proc get_design_priority {} {
 		set cell_priority [expr {([lindex $cell_hvt_leak $i] - [lindex $cell_lvt_leak $i])/([lindex $cell_hvt_delay $i]-[lindex $cell_lvt_delay $i])}]
 		lappend priority_list "[lindex $cells $i] $cell_priority"
 	}
+	#area list sorted by cost function
 	set ret_1 [list]
-	foreach item [lsort -index 3 -decreasing -real $area_ratio_list] {
-		lappend ret_1 [list [lindex $item 0] [lindex $item 1] [lindex $item 2]]
+	foreach item [lsort -index 1 -decreasing -real $area_ratio_list] {
+		lappend ret_1 [lindex $item 0]
 	}
+	#vth list sorted by cost function
 	set ret_2 [list]
 	foreach item [lsort -index 1 -decreasing -real $priority_list] {
 		lappend ret_2 [lindex $item 0]
@@ -287,25 +358,25 @@ proc optimize {minimum_slack} {
 	set priorities_area [lindex $priorities 0]
 	set priorities_vth [lindex $priorities 1]
 
+	if {0} {
 	set area_changes 0
-	foreach row $priorities_area {
-		set cell [lindex $row 0]
-		set original_ref_name [lindex $row 1]
-		set original_type [lindex $row 2]
-		swap_cell_with_min_size $cell
+	foreach cell $priorities_area {
+		set original_ref_name [lindex [get_cell_attributes $cell] 1]
+		set original_type [swap_cell_with_min_size $cell]
 		incr area_changes
 		if {[get_slack $minimum_slack]==0} {
 			#constraints not met! rollback and stop!
 			puts "NO MORE OPTIMIZATION IS POSSIBLE!"
 			puts "I ARRIVED UNTIL $cell"
 			#come back to the original size
-			puts "cell to change: $cell, with $original_ref_name"
+			puts "change back cell $cell, with $original_ref_name"
 			swap_cell_back_with_type $cell $original_ref_name $original_type
 			set area_changes [expr $area_changes - 1]
 			break
 		}
 	}
 	puts "changed $area_changes cells"
+	}
 	foreach cell $priorities_vth {
 		swap $cell HVT
 		if {[get_slack $minimum_slack]==0} {
