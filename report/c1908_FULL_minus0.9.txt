@@ -5,59 +5,59 @@ HVT%  | LVT%  |                 LEAK |              DYNAMIC |                TOT
 52.74 | 47.26 |    4.14969854361e-07 |    0.000478519981819 |     0.00047893495017 | 798.2 |
 -------------------------------------------------------------------------------------------
 Information: Running switching activity propagation with 4 threads!
-Ratio: 12.2226744539
-Ratio: 13.3045438494
-Ratio: 13.2723977231
-Ratio: 1.32657613797
-Ratio: 1.07135481193
-Ratio: 1.08838954466
-Ratio: 15.7508706072
-Ratio: 13.3005483531
-Ratio: 13.1347346602
-Ratio: 1.05756967282
-Ratio: 1.02203701595
-Ratio: 1.26457895868
-Ratio: 1.0856592276
-Ratio: 1.10858294442
-Ratio: 1.12300613814
-Ratio: 1.11353417045
-Ratio: 1.11042565993
-Ratio: 9.46470160127
-Ratio: 1.03445692639
-Ratio: 24.8326426741
-Ratio: 5.934081908
-Ratio: 25.0272196334
-Ratio: 24.8154596705
-Ratio: 25.0148266194
-Ratio: 24.8155694933
-Ratio: 24.8182240838
-Ratio: 26.7928550491
-Ratio: 26.8257030062
-Ratio: 26.790549276
-Ratio: 23.7084284195
-Ratio: 23.7082525751
-Ratio: 23.7128659749
-Ratio: 26.7942523552
-Ratio: 25.0188808453
-Ratio: 25.0156543081
-Ratio: 25.013764213
-Ratio: 110.519377885
-Ratio: 54.4944449288
-Ratio: 0.963187881452
-Ratio: 0.98348255728
-Ratio: 14.3564095438
-Ratio: 0.951008123979
-Ratio: 0.982821391048
-Ratio: 117.557774646
-Ratio: 6.34612285698
-Ratio: 6.2447757012
-Ratio: 77.1343152014
-Ratio: 51.3682689585
-Ratio: 77.2240017654
-Ratio: 51.3353752094
-Ratio: 39.2503430635
-Ratio: 21.0314912085
-Ratio: 29.8560976042
+Ratio: 6.96738098843
+Ratio: 5.59163695798
+Ratio: 4.92639073463
+Ratio: 2.25937546685
+Ratio: 2.61287517144
+Ratio: 2.22798386899
+Ratio: 8.08839832871
+Ratio: 4.0058289864
+Ratio: 6.19017733203
+Ratio: 1.42868690683
+Ratio: 1.99354718747
+Ratio: 1.48385170111
+Ratio: 1.94679146019
+Ratio: 1.57363512717
+Ratio: 1.68905641826
+Ratio: 2.19392144392
+Ratio: 1.3544292783
+Ratio: 3.68425821866
+Ratio: 1.56930481365
+Ratio: 5.16344736741
+Ratio: 3.21453275308
+Ratio: 5.05404611408
+Ratio: 5.25546128752
+Ratio: 5.15545198978
+Ratio: 5.54093008985
+Ratio: 5.22819884022
+Ratio: 6.48845317737
+Ratio: 6.4888024972
+Ratio: 6.67969010825
+Ratio: 4.95727892136
+Ratio: 5.09678271329
+Ratio: 5.15768005422
+Ratio: 6.73175342455
+Ratio: 5.21879221852
+Ratio: 5.62249575807
+Ratio: 5.62234859053
+Ratio: 15.1102669285
+Ratio: 10.4491482486
+Ratio: 1.67401678285
+Ratio: 1.18889903475
+Ratio: 4.23610055266
+Ratio: 1.16682411441
+Ratio: 1.18836826968
+Ratio: 15.3823453899
+Ratio: 2.82612835817
+Ratio: 3.28106111539
+Ratio: 11.443659371
+Ratio: 8.75552721296
+Ratio: 11.4528930664
+Ratio: 8.81007971362
+Ratio: 7.78699120239
+Ratio: 4.88740307834
+Ratio: 7.75308653755
 Information: Running switching activity propagation with 4 threads!
 Information: Running switching activity propagation with 4 threads!
 circuit slack: -0.167787
@@ -70,15 +70,17 @@ circuit slack: -0.217048
 Information: Running switching activity propagation with 4 threads!
 circuit slack: -0.445913
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.462317
+circuit slack: -0.445913
 Information: Running switching activity propagation with 4 threads!
 circuit slack: -0.462317
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.462317
+circuit slack: -0.463655
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.462317
+circuit slack: -0.463655
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.462317
+circuit slack: -0.463655
+Information: Running switching activity propagation with 4 threads!
+circuit slack: -0.463959
 Information: Running switching activity propagation with 4 threads!
 circuit slack: -0.458291
 Information: Running switching activity propagation with 4 threads!
@@ -88,186 +90,192 @@ circuit slack: -0.458291
 Information: Running switching activity propagation with 4 threads!
 circuit slack: -0.458291
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455500
+circuit slack: -0.458291
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455500
+circuit slack: -0.458291
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455500
+circuit slack: -0.458291
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455500
+circuit slack: -0.463368
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455500
+circuit slack: -0.463368
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455500
+circuit slack: -0.463368
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455500
+circuit slack: -0.463368
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455500
+circuit slack: -0.463190
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455500
+circuit slack: -0.463190
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455471
+circuit slack: -0.459480
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455471
+circuit slack: -0.459480
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455471
+circuit slack: -0.459480
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455471
+circuit slack: -0.459451
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455471
+circuit slack: -0.459451
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455471
+circuit slack: -0.627494
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.455471
+circuit slack: -0.627494
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.607811
+circuit slack: -0.627494
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.607811
+circuit slack: -0.610340
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.610324
+circuit slack: -0.610413
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.610397
+circuit slack: -0.610413
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.610397
+circuit slack: -0.610413
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.610397
+circuit slack: -0.610413
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.610397
+circuit slack: -0.610413
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.610397
+circuit slack: -0.610413
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.607114
+circuit slack: -0.610399
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.601664
+circuit slack: -0.610399
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.601664
+circuit slack: -0.610399
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.601664
+circuit slack: -0.610399
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.601664
+circuit slack: -0.602039
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.601542
+circuit slack: -0.606133
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.601469
+circuit slack: -0.606133
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.601469
+circuit slack: -0.600700
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.601469
+circuit slack: -0.600129
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.595162
+circuit slack: -0.600129
 Information: Running switching activity propagation with 4 threads!
-circuit slack: -0.595162
-changed 49 cells
-circuit slack: -0.612979
-circuit slack: -0.613792
-circuit slack: -0.614062
-circuit slack: -0.616010
-circuit slack: -0.616010
-circuit slack: -0.616010
-circuit slack: -0.616010
-circuit slack: -0.616010
-circuit slack: -0.616010
-circuit slack: -0.616010
-circuit slack: -0.622341
-circuit slack: -0.622341
-circuit slack: -0.713611
-circuit slack: -0.713611
-circuit slack: -0.713611
-circuit slack: -0.713611
-circuit slack: -0.713611
-circuit slack: -0.713611
-circuit slack: -0.713611
-circuit slack: -0.713611
-circuit slack: -0.733644
-circuit slack: -0.733644
-circuit slack: -0.733644
-circuit slack: -0.733644
-circuit slack: -0.733644
-circuit slack: -0.733644
-circuit slack: -0.733644
-circuit slack: -0.760624
-circuit slack: -0.760624
-circuit slack: -0.760624
-circuit slack: -0.760624
-circuit slack: -0.760691
-circuit slack: -0.760691
-circuit slack: -0.760691
-circuit slack: -0.760691
-circuit slack: -0.760691
-circuit slack: -0.760691
-circuit slack: -0.759864
-circuit slack: -0.759864
-circuit slack: -0.759864
-circuit slack: -0.756633
-circuit slack: -0.756633
-circuit slack: -0.753392
-circuit slack: -0.750151
-circuit slack: -0.746911
-circuit slack: -0.746911
-circuit slack: -0.746119
-circuit slack: -0.742878
-circuit slack: -0.742878
-circuit slack: -0.742878
-circuit slack: -0.742878
-circuit slack: -0.742878
-circuit slack: -0.762259
-circuit slack: -0.762271
-circuit slack: -0.760552
-circuit slack: -0.760552
-circuit slack: -0.760552
-circuit slack: -0.760552
-circuit slack: -0.760552
-circuit slack: -0.795110
-circuit slack: -0.795110
-circuit slack: -0.795110
-circuit slack: -0.795110
-circuit slack: -0.795110
-circuit slack: -0.795110
-circuit slack: -0.795110
-circuit slack: -0.795671
-circuit slack: -0.812767
-circuit slack: -0.812767
-circuit slack: -0.812767
-circuit slack: -0.812884
-circuit slack: -0.812884
-circuit slack: -0.809707
-circuit slack: -0.847419
-circuit slack: -0.847419
-circuit slack: -0.846943
-circuit slack: -0.845977
-circuit slack: -0.844999
-circuit slack: -0.844999
-circuit slack: -0.844999
-circuit slack: -0.844999
-circuit slack: -0.844999
-circuit slack: -0.844999
-circuit slack: -0.844996
-circuit slack: -0.844996
-circuit slack: -0.844996
-circuit slack: -0.844996
-circuit slack: -0.844996
-circuit slack: -0.846247
-circuit slack: -0.846247
-circuit slack: -0.846247
-circuit slack: -0.846247
-circuit slack: -0.846178
-circuit slack: -0.854407
-circuit slack: -0.853218
-circuit slack: -0.899700
-circuit slack: -0.898262
-circuit slack: -0.898262
-circuit slack: -0.898262
-circuit slack: -0.898256
-circuit slack: -0.898256
-circuit slack: -0.911340
+circuit slack: -0.600129
+Information: Running switching activity propagation with 4 threads!
+circuit slack: -0.600129
+Information: Running switching activity propagation with 4 threads!
+circuit slack: -0.600129
+Information: Running switching activity propagation with 4 threads!
+circuit slack: -0.600129
+changed 53 cells
+circuit slack: -0.617872
+circuit slack: -0.618701
+circuit slack: -0.618965
+circuit slack: -0.620124
+circuit slack: -0.620124
+circuit slack: -0.620124
+circuit slack: -0.620124
+circuit slack: -0.620124
+circuit slack: -0.620124
+circuit slack: -0.620124
+circuit slack: -0.627329
+circuit slack: -0.627329
+circuit slack: -0.718658
+circuit slack: -0.718658
+circuit slack: -0.718658
+circuit slack: -0.718658
+circuit slack: -0.718658
+circuit slack: -0.718658
+circuit slack: -0.718658
+circuit slack: -0.718658
+circuit slack: -0.738690
+circuit slack: -0.738690
+circuit slack: -0.738690
+circuit slack: -0.738690
+circuit slack: -0.738690
+circuit slack: -0.738690
+circuit slack: -0.738690
+circuit slack: -0.765670
+circuit slack: -0.765670
+circuit slack: -0.765670
+circuit slack: -0.765670
+circuit slack: -0.765689
+circuit slack: -0.765689
+circuit slack: -0.765689
+circuit slack: -0.765689
+circuit slack: -0.765689
+circuit slack: -0.765689
+circuit slack: -0.764861
+circuit slack: -0.764861
+circuit slack: -0.764861
+circuit slack: -0.761623
+circuit slack: -0.761623
+circuit slack: -0.758382
+circuit slack: -0.755140
+circuit slack: -0.751899
+circuit slack: -0.751899
+circuit slack: -0.751108
+circuit slack: -0.747867
+circuit slack: -0.747867
+circuit slack: -0.747867
+circuit slack: -0.747867
+circuit slack: -0.747867
+circuit slack: -0.762262
+circuit slack: -0.762274
+circuit slack: -0.760554
+circuit slack: -0.760554
+circuit slack: -0.760554
+circuit slack: -0.760554
+circuit slack: -0.760554
+circuit slack: -0.790353
+circuit slack: -0.790353
+circuit slack: -0.790353
+circuit slack: -0.790353
+circuit slack: -0.790353
+circuit slack: -0.790353
+circuit slack: -0.790353
+circuit slack: -0.794491
+circuit slack: -0.812376
+circuit slack: -0.812376
+circuit slack: -0.812376
+circuit slack: -0.812463
+circuit slack: -0.812463
+circuit slack: -0.809306
+circuit slack: -0.847176
+circuit slack: -0.847176
+circuit slack: -0.846700
+circuit slack: -0.845734
+circuit slack: -0.844756
+circuit slack: -0.844756
+circuit slack: -0.844756
+circuit slack: -0.844756
+circuit slack: -0.844756
+circuit slack: -0.844756
+circuit slack: -0.844754
+circuit slack: -0.844754
+circuit slack: -0.844754
+circuit slack: -0.844754
+circuit slack: -0.844754
+circuit slack: -0.846004
+circuit slack: -0.846004
+circuit slack: -0.846004
+circuit slack: -0.846004
+circuit slack: -0.845935
+circuit slack: -0.853248
+circuit slack: -0.852059
+circuit slack: -0.896934
+circuit slack: -0.895496
+circuit slack: -0.895496
+circuit slack: -0.895496
+circuit slack: -0.895490
+circuit slack: -0.895490
+circuit slack: -0.913896
 NO MORE OPTIMIZATION IS POSSIBLE!
 I ARRIVED UNTIL U195
 final slack: 
-circuit slack: -0.898256
+circuit slack: -0.895490
 CURRENT MAPPING
 -------------------------------------------------------------------------------------------
 Information: Running switching activity propagation with 4 threads!
 HVT%  | LVT%  |                 LEAK |              DYNAMIC |                TOTAL |  AREA |
-42.62 | 57.38 |    4.04730628484e-07 |    0.000415985130455 |    0.000416389862998 | 672.88 |
+42.62 | 57.38 |    4.04761025159e-07 |    0.000420390257517 |    0.000420795017725 | 674.96 |
 -------------------------------------------------------------------------------------------
-score: 3.3618726052
+score: 3.34608608788

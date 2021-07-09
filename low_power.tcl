@@ -258,6 +258,8 @@ proc get_design_priority {} {
 	set cell_min_leak [list]
 	set cell_init_dynamic [list]
 	set cell_min_dynamic [list]
+	set cell_init_delay [list]
+	set cell_min_delay [list]
 	set priority_list [list]
 	set cells [get_all_cells]
 	set cell_original_ref_name [list]
@@ -269,6 +271,7 @@ proc get_design_priority {} {
 		lappend cell_init_area [lindex $attributes 2]
 		lappend cell_init_leak [lindex $attributes 4]
 		lappend cell_init_dynamic [lindex $attributes 5]
+		lappend cell_init_delay [lindex $attributes 7]
 		lappend cell_original_ref_name [lindex $attributes 1]
 	}
 
@@ -283,6 +286,7 @@ proc get_design_priority {} {
 		lappend cell_min_area [lindex $min_a_attributes 2]
 		lappend cell_min_leak [lindex $min_a_attributes 4]
 		lappend cell_min_dynamic [lindex $min_a_attributes 5]
+		lappend cell_min_delay [lindex $min_a_attributes 7]
 	}
 
 	set area_ratio_list [list]
@@ -291,7 +295,7 @@ proc get_design_priority {} {
 			#no swap has been performed
 			continue
 		}
-		set ratio [expr (([lindex $cell_init_area $i] / [lindex $cell_min_area $i]) + ([lindex $cell_init_dynamic $i] / [lindex $cell_min_dynamic $i])) / ([lindex $cell_min_leak $i] / [lindex $cell_init_leak $i])]
+		set ratio "[expr ([lindex $cell_init_area $i]/[lindex $cell_min_area $i] + [lindex $cell_init_leak $i]/[lindex $cell_min_leak $i] + [lindex $cell_init_dynamic $i]/[lindex $cell_min_dynamic $i]) / ([lindex $cell_min_delay $i]/[lindex $cell_init_delay $i])]"
 		puts "Ratio: $ratio"
 		if {$ratio > 1} {
 			#it is worth to change
