@@ -1,6 +1,6 @@
 # LL_contest
 Low Power project for Synthesis and Optimization of Digital Systems.
-Optimization procedure for DualVth std_cells design, to be used within PrimeTime.
+Optimization procedure for (Area, Delay, Power) with DualVth std_cells design, to be used within PrimeTime.
 
 ## SETUP (WORK_SYNTHESIS environment)
 [PrimeTime synthesis script](./syn/pt_synthesis/pt_analysis.tcl) <br>
@@ -24,3 +24,4 @@ Sythesis scripts are working on C1908 netlist, change block name attribute insid
 [c5315 struct](./syn/rtl_tested/c5315/verilog/c5315.v) <br>
 **Should go**: ~/WORK_SYNTHESIS/rtl <br> <br>
 [main script](./low_power.tcl)<br>
+[report](./dualVth_group_6.pdf)<br>
